@@ -10,18 +10,22 @@ connected = [sock]
 tosend = []
 info = {}
 readable = []
+clients = []
 messages = queue.Queue()
-sock.bind(('localhost', 5005))
+sock.bind(('10.3.9.39', 5005))
 sock.listen()
 print("Server is listening...")
+
 
 def waiting():
     while True:
         print("Checking for new connection...")
         conn, address = sock.accept() # New Connection
+        clients.append(conn)
         if conn not in readable:
             readable.append(conn)
-            print(f"Welcome {conn.recv(1024).decode()}")
+        for i in clients:
+            i.send(f"Welcome {i}".encode())
 
 
 def message_handling():
@@ -35,17 +39,18 @@ def message_handling():
 def print_out():
     while True:
         if not messages.empty:
-            print(messages.get())
+            for i in clients:
+                i.send(messages.get().encode())
         sleep(1)
 
 x = threading.Thread(target=waiting)
 y = threading.Thread(target=message_handling)
 z = threading.Thread(target=print_out)
 
+
 x.start()
 y.start()
 z.start()
-
 
 # root = Tk()
 # root.geometry('425x500')
