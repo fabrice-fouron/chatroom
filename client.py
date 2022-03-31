@@ -37,7 +37,7 @@ root.resizable(width=True, height=True)
 msg_list = []
 
 client = Client("Client 1")
-client.connect(('localhost', 5005))
+client.connect(('10.3.9.39', 5005))
 
 frameTop = Text(root, bg="#ABB2B9")
 frameTop.pack(side=TOP, padx=20, pady=20)
@@ -72,11 +72,20 @@ def add():
     norm.pack()
 
 
-def main():
+def receiving():
     while True:
-        root.update()
         tempo = client.receive(1024)
         msg_list.append(tempo)
+
+
+recThread = threading.Thread(target=receiving)
+
+
+def main():
+    recThread.start()
+    while True:
+        root.update()
+
 
 if __name__ == "__main__":
     try:
