@@ -70,6 +70,9 @@ def send_msg():
 send_button = Button(root, text="Send", command=send_msg)
 send_button.pack(side=RIGHT)
 
+def update_text():
+    while True:
+        add(msg_list.get())
 
 def receiving():
     while True:
@@ -78,10 +81,12 @@ def receiving():
 
 
 recThread = threading.Thread(target=receiving)
+updateThread = threading.Thread(target=update_text)
 
 
 def main():
     recThread.start()
+    updateThread.start()
     while True:
         root.update()
 
