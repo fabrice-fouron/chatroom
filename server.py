@@ -25,23 +25,26 @@ def waiting():
         if conn not in readable:
             readable.append(conn)
         for i in clients:
-            i.send(f"Welcome {i}".encode())
+            i.send(f"You have joined the server".encode())
 
 
 def message_handling():
     while True:
         sleep(1)
         print("Handling messages")
-        for i in readable:
+        print(clients)
+        for i in clients:
             temp = i.recv(1024).decode()
+            print(temp)
             messages.put(temp)
 
 def print_out():
     while True:
-        if not messages.empty:
+        if messages.qsize() > 0:
             for i in clients:
-                i.send(messages.get().encode())
-        sleep(1)
+                tempo = messages.get()
+                print(tempo, "ahah")
+                i.send(tempo.encode())
 
 x = threading.Thread(target=waiting)
 y = threading.Thread(target=message_handling)
@@ -51,15 +54,3 @@ z = threading.Thread(target=print_out)
 x.start()
 y.start()
 z.start()
-
-# root = Tk()
-# root.geometry('425x500')
-# root.title("CHATROOM")
-
-# def new_message(client, content):
-#     texts = client + ": " + content
-#     message = Message(master=root, justify='left', text=texts, fg="blue", width=400)
-#     message.pack()
-
-
-# root.mainloop()
