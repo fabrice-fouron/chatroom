@@ -34,7 +34,7 @@ root.geometry('425x500')
 root.title("CHATROOM")
 root.resizable(width=True, height=True)
 
-msg_list = []
+msg_list = queue.Queue()
 
 client = Client("Client 1")
 client.connect(('10.3.9.39', 5005))
@@ -55,27 +55,26 @@ scrollb.config(command=frameTop.yview)
 # frameTop.config(state=DISABLED)
 
 
+def add(text):
+    '''Add new message to the frame'''
+    frameTop.insert(END + "\n\n", text)
+
+
 def send_msg():
     temp = send_entry.get()
     client.send(temp)
     send_entry.delete(0, END)
-    frameTop.insert(END, msg_list.pop(0))
+    add(msg_list.get())
 
 
 send_button = Button(root, text="Send", command=send_msg)
 send_button.pack(side=RIGHT)
 
 
-def add():
-    '''Add new message to the frame'''
-    norm = Label(frameTop, text="hello\n\n", font='courier')
-    norm.pack()
-
-
 def receiving():
     while True:
         tempo = client.receive(1024)
-        msg_list.append(tempo)
+        msg_list.put(tempo)
 
 
 recThread = threading.Thread(target=receiving)
