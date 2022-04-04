@@ -37,7 +37,7 @@ root.resizable(width=True, height=True)
 msg_list = queue.Queue()
 
 client = Client("Client 1")
-client.connect(('10.3.9.39', 5005))
+client.connect(('10.0.0.194', 5005))
 
 frameTop = Text(root, bg="#ABB2B9")
 frameTop.pack(side=TOP, padx=20, pady=20)
@@ -64,7 +64,7 @@ def send_msg():
     temp = send_entry.get()
     client.send(temp)
     send_entry.delete(0, END)
-    add(msg_list.get())
+    # add(msg_list.get())
 
 
 send_button = Button(root, text="Send", command=send_msg)
@@ -81,18 +81,20 @@ def receiving():
 
 
 recThread = threading.Thread(target=receiving)
-updateThread = threading.Thread(target=update_text)
+# updateThread = threading.Thread(target=update_text)
 
 
 def main():
     recThread.start()
-    updateThread.start()
+    # updateThread.start()
     while True:
+        if msg_list.qsize() > 0:
+            add(msg_list.get())
         root.update()
-
 
 if __name__ == "__main__":
     try:
         main()
     except Exception:
         print("APP CLOSED")
+        client.close()

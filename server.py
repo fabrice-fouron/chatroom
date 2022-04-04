@@ -38,7 +38,7 @@ def message_handling():
             print(temp)
             messages.put(temp)
 
-def print_out():
+def print_out(): 
     while True:
         if messages.qsize() > 0:
             for i in clients:
